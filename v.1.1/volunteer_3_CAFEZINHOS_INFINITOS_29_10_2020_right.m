@@ -145,15 +145,56 @@ figure();
 corr_media_1={[]};
 figure ()
 for i = 1:Dim(1,1)
-    corr_media_1{i,1}= sum(cm_yR_w{i,1}(:,:))/length(cm_yR_w{i,1});
-    h= plot(i,corr_media_1{i,1}(1,:));
+    corr_media_1{i,1} = sum(cm_yR_w{i,1}(:,:))/length(cm_yR_w{i,1});
+    corr_media_1{i,2} = mean(corr_media_1{i,1}(1,:));
+    % find curve indeces that have corr_media{i,1} greater or equal to corr_media{i,2} of subject
+    keep{i,1}=find(corr_media_1{i,1}(1,:) >= corr_media_1{i,2} );
+    keepers1_GRF{i,1}=yr_w{i,1}(keep{i,1}(1,:),:);
+    
+    h = plot(i,corr_media_1{i,1}(1,:));
     set(h,'Marker','o');
     grid on
     grid minor
     hold on
+    
 end
 
+figure()
+for i=1:Dim(1,1)
+    subplot(3,5,i);
+        plot(keepers1_GRF{i,1}(:,:)'); 
+        hold on;
+end
+
+corr2_w={[]};
+figure()
+for i =1:Dim(1,1)
+    corr2_w{i,1}=corr(keepers1_GRF{i,1}');
+    subplot (3,5,i); 
+        colormap(cool);
+        imagesc(corr2_w{i,1}(:,:)');
+    %%calcular corr media, e corr media total e verificar se é maior que
+    %%85%
+end
+
+corr3_w={[]};
+figure()
+for i =1:Dim(1,1)
+    corr3_w{i,1}=corr(keepers1_GRF{i,1}');
+    subplot (3,5,i); 
+        colormap(cool);
+        imagesc(corr2_w{i,1}(:,:)');
+    %%calcular corr media, e corr media total e verificar se é maior que
+    %%85%
+end
+
+%
+
+%investigate=
+
 %% correlação muito fracas (< 0.40) - remover curvas e reavaliar correlação entre curvas restantes
+
+
 %% FIIIIIIX IIIIITTTTTT = TUDO ERRADO 11/11/2020
 for i=1:15
     k=length(corr_media_1{i,1});
@@ -172,7 +213,7 @@ end
 %% mat_corr_2 : agora vamos ficar apenas com curvas que sejam parecidas, e podemos verificar o quão parecidas são essas curvas restantes;  
 
 
-    %% graph - see what means correlation??    
+    %% graph - see what means correlation?? e a diagonal principal?
     figure()
         plotmatrix(yr_w{10,1}')
             hold on
