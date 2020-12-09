@@ -56,7 +56,7 @@ Fc=20;
 %Function prepare_curves
 prepared_curves_R=prepare_curves(Dim(1,1),n_steps_R,elderly_grf_r,Weight,Fs,Fc);
 
-%% montando a matrix de saida para filtro de correlação 
+%% montando a matrix de saida - correlação 
 %(existe esse nome? só encontro para imagem)
 
 Output_GRF={[]};
@@ -89,8 +89,8 @@ end
 %% create functiom that does correlation matrix and filters based on correlation between curves;
 % %% mat_corr_1: antes de remover corr_coef muito fracos (<0.40);
 %% primeira matrix de correlação
- cm_R_w{i,l}={[]}; 
- 
+cm_R_w{i,l}={[]}; 
+
  for i =1:Dim(1,1)
      for l=1:3
      cm_R_w{i,l} = corr(grf_r_w{i,l}');
@@ -349,8 +349,8 @@ for i=1:Dim(1,1)
     end    
 end
 %% arrumar tudo aqui pq ainda nao deu para tirar as correlações sem olhar quem tá mais diferente de quem...
-figure()
-plotmatrix(grf_r_all{1, 2}(:,:))
+% figure()
+% plotmatrix(grf_r_all{1, 2}(:,:))
 
 %subplot(1,3,l)
 %plot(prepared_curves_R{i,l}{j,1}); 
