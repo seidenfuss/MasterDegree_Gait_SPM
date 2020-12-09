@@ -13,7 +13,8 @@ Diretory_GRF_elderly = './idosos_GRF/';
 %% calculating weight using one static test
 
 Dim=size(Data_GRF_Elderly);
-%plotDim=
+%plotDim= find minimos multiplos comuns para o numero de participantes e se for primo:
+%triste fim- arredonda pro proximo maior e deixa vazio ou expande? nao sei;
 Weight = zeros(Dim(1,1),1);
 Mass_kg = zeros(Dim(1,1),1);
 
@@ -51,19 +52,31 @@ end
 
     %define cut frequency: learn how;
 %Fc=24;
-Fc=24;
+Fc=20;
 %Function prepare_curves
 prepared_curves_R=prepare_curves(Dim(1,1),n_steps_R,elderly_grf_r,Weight,Fs,Fc);
-yR={[]};
+
+%% montando a matrix de saida para filtro de correlação 
+%(existe esse nome? só encontro para imagem)
 
 Output_GRF={[]};
+grf_r_w={[]};
 for i=1:Dim(1,1)
     k=length(prepared_curves_R{i,1});
     for j=1:k
         for l=1:3
-            yR{i,j,l}=prepared_curves_R{i,l}{j,1}(:,1);
-            Output_GRF{i,1}(j,:,l)=transp(yR{i,j,l}(1:100));
+            grf_r_w{i,l}(j,:)= horzcat(transp(prepared_curves_R{i,l}{j,1}(:,1)));
         end
+    end
+end
+
+%% plot matrizes de correlação originais
+for l=1:3
+    figure()
+    for i=1:Dim(1,1) 
+        subplot(3,5,i);
+        plot(grf_r_w{i,l}(:,:)'); 
+        hold on;
     end
 end
 
@@ -73,128 +86,84 @@ end
 %total_steps_R=0;
 %organize data so it is all in one matrix inside a cell for each
 %participant
-within_GRF={[]};
-for i=1:Dim(1,1)
-   %total_steps_R=total_steps_R + sum(length(prepared_curves_R{i,1}));
-        k=length(prepared_curves_R{i,1});
-    for j=1:k
-        for l=1:3
-            within_GRF{i,l}(j,:)=horzcat(Output_GRF{i,1}(j,:,l));          
-        end     
-    end
-end
-
-xr_w{i,1}={[]}; yr_w{i,1}={[]}; zr_w{i,1}={[]};
-for i=1:Dim(1,1)
-    xr_w{i,1}=within_GRF{i,1}(:,:);
-    yr_w{i,1}=within_GRF{i,2}(:,:);
-    zr_w{i,1}=within_GRF{i,3}(:,:);  
-end
-
-figure()
-for i=1:Dim(1,1)
-    subplot(3,5,i);
-        plot(xr_w{i,1}(:,:)'); 
-        hold on;
-end
-
-figure()
-for i=1:Dim(1,1)
-    subplot(3,5,i);
-        plot(yr_w{i,1}(:,:)'); 
-        hold on;
-end
-
-figure()
-for i=1:Dim(1,1)
-    subplot(3,5,i);
-        plot(zr_w{i,1}(:,:)'); 
-        hold on;
-end
-
-%% mat_corr_1: antes de remover corr_coef muito fracos (<0.40);
-%primeira matrix de correlação
-
-cm_xR_w={[]}; cm_yR_w={[]}; cm_zR_w={[]};
-
-for i =1:Dim(1,1)
-    cm_xR_w{i,1} = corr(xr_w{i,1}');
-    cm_yR_w{i,1} = corr(yr_w{i,1}');
-    cm_zR_w{i,1} = corr(zr_w{i,1}');
-end
-
+%% create functiom that does correlation matrix and filters based on correlation between curves;
+% %% mat_corr_1: antes de remover corr_coef muito fracos (<0.40);
+%% primeira matrix de correlação
+ cm_R_w{i,l}={[]}; 
+ 
+ for i =1:Dim(1,1)
+     for l=1:3
+     cm_R_w{i,l} = corr(grf_r_w{i,l}');
+     end
+ end
+ 
+for l=1:3
 figure();
     for i=1:Dim(1,1)
         subplot (3,5,i); 
         colormap(cool); 
-        imagesc(cm_xR_w{i,1}'); 
+        imagesc(cm_R_w{i,1}'); 
     end
-
-figure();
-    for i=1:Dim(1,1)
-        subplot (3,5,i); 
-        colormap(cool); 
-        imagesc(cm_yR_w{i,1}'); 
-    end
-
-figure();
-    for i=1:Dim(1,1)
-        subplot (3,5,i); 
-        colormap(cool);
-        imagesc(cm_zR_w{i,1}');
-    end
-    
-    
-    
+end
+   
 %%   calcula a correlação media de cada evento (stance phase curve) compara com a corr media de todos os eventos e mantem apenas valores superiores à media total:
-%   qual curva tem a menor correlação - primeiro faz a media de cada curva
-%   e depois a média de todas as curvas;
-
-% corr_media={[]};
-% corr_p={[]};
-
-% figure ()
+% %   qual curva tem a menor correlação - primeiro faz a media de cada curva
+% %   e depois a média de todas as curvas;
 % 
-% for i = 1:Dim(1,1)
-%     corr_media{i,1} = sum(cm_yR_w{i,1}(:,:))/length(cm_yR_w{i,1});
-%     corr_media{i,2} = mean(corr_media{i,1}(1,:));
-%     
-%     corr_p{i,1}=prctile(cm_yR_w{i,1}(:,:),50);
-%     corr_p{i,2}=prctile(corr_p{i,1},10);
-%     
-%     % find curve indeces that have corr_media{i,1} greater or equal to corr_media{i,2} of subject
-%     %
-%     keep{i,1}=find(corr_media{i,1}(1,:) >= corr_media{i,2} );
-%     keepers1_GRF{i,1}=yr_w{i,1}(keep{i,1}(1,:),:);
-%     
-%     h = plot(i,corr_media{i,1}(1,:));
-%     set(h,'Marker','o');
-%     grid on
-%     grid minor
-%     hold on
-%     
-%    % find curve indeces that have corr_p{i,1} greater or equal to
-%         % corr_p{i,2} of subject i
+%   corr_media={[]}; 
+%   figure ()
+% % 
+%   for i = 1:Dim(1,1)
+%       corr_media{i,1} = sum(cm_R_w{i,2}(:,:))/length(cm_R_w{i,2});
+%       corr_media{i,2} = min(corr_media{i,1}(1,:));
+%     %find curve indeces that have corr_media{i,1}(:,:)
+%     %[mean correlation of each step with other steps]
+%     %greater corr_media{i,2} [minimum value] of subject i
+%      keep_indeces{i,1}=find(corr_media{i,1}(1,:) > corr_media{i,2} );
+%      keepers_GRF{i,1}=grf_r_w{i,2}(keep_indeces{i,1}(1,:),:);
+%     %plot corr        
+%      h = plot(i,corr_media{i,1}(1,:));
+%      set(h,'Marker','o');grid on;grid minor;hold on 
+%      
+%      subplot(3,5,i);
+%      plot(keepers_GRF{i,1}(:,:)'); 
+%      hold on
+%   end
 %  
-%     keep_p{i,1}=find(corr_p{i,1}(1,:) >= corr_p{i,2} );
-%     keepers1_GRF_p{i,1}=yr_w{i,1}(keep_p{i,1}(1,:),:);
-%     
-%     h = plot(i,corr_p{i,1}(1,:));
-%     set(h,'Marker','o');
-%     grid on
-%     grid minor
-%     hold on
-%     
-%     
-% end
+% %% SEGURAAAAA; segunda rodada de "exclusões" ou classificações agora 
+% %o input é o output da ultima tarefa...
+% %precisa calcular a matrix de correlação de novo e encontrar o menor valor
+% %se ele for > 85%: não fazer nada [corrigir isso para a primeira rodada];
+% %e o output dessa sera entrada da próxima... calcula Matriz de correlação...
+% %até que o valor mínimo seja pelo menos 85% - 90% [0.85:0.90]?
+% %fazer corr_mat de novo...
 % 
-% figure()
-% for i=1:Dim(1,1)
-%     subplot(3,5,i);
-%         plot(keepers1_GRF{i,1}(:,:)'); 
-%         hold on;
-% end
-% 
+%  figure() 
+%     for i = 1:Dim(1,1)
+%       corr_media_1{i,1} = sum(cm_R_w{i,1}(:,:))/length(cm_R_w{i,1});
+%       corr_media_1{i,2} = min(corr_media_1{i,1}(1,:));
+%     %find curve indeces that have corr_media{i,1}(:,:)
+%     %[mean correlation of each step with other steps]
+%     %greater corr_media{i,2} [minimum value] of subject i
+%      keep_indeces_1{i,1}=find(corr_media_1{i,1}(1,:) > corr_media_1{i,2} );
+%      keepers_GRF_1{i,1}=keepers_GRF{i,1}(keep_indeces_1{i,1}(1,:),:);
+%      
+%      
+%     %plot corr        
+%      h = plot(i,corr_media_1{i,1}(1,:));
+%      set(h,'Marker','o');grid on;grid minor;hold on    
+%      
+%      subplot(3,5,i);
+%          plot(keepers_GRF_1{i,1}(:,:)'); 
+%          hold on
+%  end
+ 
+ 
+ 
+ 
+ 
+ 
+ %
 % figure()
 % for i=1:Dim(1,1)
 %     subplot(3,5,i);
@@ -285,9 +254,9 @@ figure();
 %         plot(keepers2_GRF_p{i,1}(:,:)'); 
 %         hold on;
 % end
-
-
-
+% 
+% 
+% 
 
 
 
@@ -329,9 +298,10 @@ figure();
 
 
     %% graph - see what means correlation?? e a diagonal principal?
-    figure()
-        plotmatrix(yr_w{10,1}')
-            hold on
+%     for i=1:Dim(1,1)
+%     figure()
+%         plotmatrix(grf_r_w{i,2}')
+%     end
     %figure()
     %    feather(yr_w{10,1}');
         
@@ -360,40 +330,28 @@ figure();
 %FIX ITTT
 
 AQUI=0;
-all_GRF={[]};
-%total_steps_R=0;
+grf_r_all{1,l}={[]}; 
+cm_r_all{1,l}={[]};
 figure()
 for i=1:Dim(1,1)
-    %total_steps_R=total_steps_R + sum(length(prepared_curves_R{i,1}));
-        k=length(prepared_curves_R{i,1});
+    k=length(prepared_curves_R{i,1});
     for j=1:k
            AQUI=AQUI+1
         for l=1:3
-           all_GRF{l,1}(AQUI,:)=horzcat(Output_GRF{i,1}(j,:,l));
+           all_GRF{l,1}(AQUI,:)=horzcat(grf_r_w{i,2}(j,:));
            subplot(1,3,l); plot(all_GRF{l,1}(AQUI,:)); hold on;
+           
+           grf_r_all{1,l} = all_GRF{1,1}(:,:)'; 
+           cm_r_all{1,l} = corr(grf_r_all{1,l});
+           subplot(1,3,l);
+           colormap(cool); imagesc(cm_r_all{1,l}); hold on;
         end     
     end    
 end
 %% arrumar tudo aqui pq ainda nao deu para tirar as correlações sem olhar quem tá mais diferente de quem...
-xR=all_GRF{1,1}(:,:)'; 
-yR=all_GRF{2,1}(:,:)';
-zR=all_GRF{3,1}(:,:)';
+figure()
+plotmatrix(grf_r_all{1, 2}(:,:))
 
-cm_xR = corr(xR);
-cm_yR = corr(yR);
-cm_zR = corr(zR);
-
-figure(); 
-
-subplot(1,3,1);
-colormap(cool); imagesc(cm_xR); hold on;
-subplot(1,3,2); 
-colormap(cool); imagesc(cm_yR); hold on;
-subplot(1,3,3); 
-colormap(cool); imagesc(cm_zR);       
-   
-
-%plotmatrix(all_GRF{1, 1}(:,:))
 %subplot(1,3,l)
 %plot(prepared_curves_R{i,l}{j,1}); 
 
@@ -462,13 +420,13 @@ colormap(cool); imagesc(cm_zR);
 %% FIX ITTTT
 %Import - concatenate
 %Get events
-%S0egm0en0t0/0Cut-Curves
+%Segment/Cut-Curves
 %Clean Stance Duration: too short; too long; average;
 %Downsample (1000 H0z--0>100 Hz)
 %Filter: butterworth zero lag - 4th order, Fc: 24 HZ (initially)
 %Interpolate (100 nodes)
-%C0lassify using ICC: 
-    %c0o0mple0te vs incomplete 
+%Classify using ICC: 
+    %comple0te vs incomplete 
     %if R > 0.90 (CROSS-CORRELATION)
 %Make abs values (all positive values)
 %save complete curves 
@@ -477,7 +435,7 @@ colormap(cool); imagesc(cm_zR);
     %within subject file (multiple curves for each subj) 
         %1 file for subject foot... SUB1_group_R and SUB1_group_L 
         %n curves
-        %3 v0ector GRF components
+        %3 vector GRF components
     %between subject file (mean curve for each subj)
     %1 file for 0group foot - 
         %ex.:   ELDERLY_R (N subjects of older adults groups - mean curves of right foot) 
@@ -501,9 +459,9 @@ colormap(cool); imagesc(cm_zR);
 % f0or i=1:dim(1,1)
 %     k=n_steps_R{i};  
 %     p=0;
-%     0for j=1:k     
+%     for j=1:k     
 %         for l=1:3
-%          0   x{i,j,l}=elderly_grf_r{i,j,l}/W(i);
+%             x{i,j,l}=elderly_grf_r{i,j,l}/W(i);
 %             len{i,j,l}=length(x{i,j,l});
 %             
 %             %rules for lenght of stance phase based on sample frequency -
