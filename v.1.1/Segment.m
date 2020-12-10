@@ -1,7 +1,9 @@
 function [segmented_data] = Segment(data,n_steps,b_R,x,y,z)
 
 %%   Detailed explanation goes here
-%###DATA is the cell containing all data from all participants (rows) in two columns:
+%SEGMENT: It creates i sub-groups containing k (N_steps) for each
+%participant (i).
+%DATA: is the cell containing all data from all participants (rows) in two columns:
     %column 1: files of static data experiments
     %column 2: concatenated files of dynamic data experiments
 %N_STEPS is the number of steps detected for each participant over all dynamic experiments
