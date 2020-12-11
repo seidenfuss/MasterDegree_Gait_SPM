@@ -99,7 +99,26 @@ end
  %   end
 
  %% trying to make it recursive :) 
-corr_limiar=0.97;
+
+% it=1;
+% iteration={[]};
+
+% [iteration,min_corr] = corrFilter(grf_r_w,corr_limiar);
+
+%  for i=1:15    
+%       min_corr=min_corr{iter}{i,1};
+%       while min_corr < 0.97
+%           iter=iter+1;
+%           for l= 1:3
+%           input{i,l}=iteration{iter-1,1}{i,l};
+%           end
+%           [iteration,min_corr{iter,1}] = corrFilter(input,corr_limiar);
+%           
+%           min_corr = min_corr{iter,1}{i,1};
+%       end
+%  end              
+
+ corr_limiar=0.97;
   [iteration_1,min_corr_1] = corrFilter(grf_r_w,corr_limiar);
   [iteration_2,min_corr_2] = corrFilter(iteration_1,corr_limiar);
   [iteration_3,min_corr_3] = corrFilter(iteration_2,corr_limiar);
@@ -108,9 +127,9 @@ corr_limiar=0.97;
   [iteration_6,min_corr_6] = corrFilter(iteration_5,corr_limiar);
   [iteration_7,min_corr_7] = corrFilter(iteration_6,corr_limiar);
   [iteration_8,min_corr_8] = corrFilter(iteration_7,corr_limiar);
-  [iteration_9,min_corr_9] = corrFilter(iteration_8,corr_limiar);
+  %[iteration_9,min_corr_9] = corrFilter(iteration_8,corr_limiar);
   
- 
+  
  for l=1:3
      figure()
      for i=1:Dim(1,1)
@@ -165,7 +184,7 @@ corr_limiar=0.97;
         %n curves
         %3 vector GRF components
     %between subject file (mean curve for each subj)
-    %1 file for 0group foot - 
+    %1 file for group foot - 
         %ex.:   ELDERLY_R (N subjects of older adults groups - mean curves of right foot) 
         %       ELDERLY_L         
 % Curve Fit: 
