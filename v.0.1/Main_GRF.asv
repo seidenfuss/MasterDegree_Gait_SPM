@@ -1,0 +1,96 @@
+%Loading, filtering, and datinterp algorithms wrotten by Marcus Fraga Vieira: co-advisor. 
+%Translated and modified by Ana Maria Bender Seidenfuss das Neves.
+%Introducing batch (many folders and multiple files) importing and
+%Pre-Processing (Ana Maria, Rafael and Marcus) and Statistical Parametric Mapping (Todd Pataky, Friston, et al.)
+%Correlation_filter to keep good quality curves for further analysis;
+
+close all; clear; clc;
+disp('Starting GRF...')
+
+%% Loading GRF Data % give the name you think better describes your group of repetitions
+Diretory_GRF_elderly = './idosos_GRF/';
+[Data_GRF_Elderly, Fs]=import_subfolder_files(Diretory_GRF_elderly);
+
+%% Loading Metadata - date of birth, date of examination, age, weight, mass
+% and will add more info as it goes, such:  number of steps, force peaks, speed(calculate using formula from keller v=(peak_F_Vert - 0.159)/0.634), time to force peak (% stance-phase), GRF_3D_processed,GRF_3D_segmented ,raw.
+load('elderly_metadata.mat')
+
+%% Calculating Weight (N) using one static test
+Dim=size(Data_GRF_Elderly);
+Weight = zeros(Dim(1,1),1);
+Mass_kg = zeros(Dim(1,1),1);
+
+for i=1:Dim(1,1)
+    Weight(i,1)=mean(Data_GRF_Elderly{i,1}(1:end-2,3) + Data_GRF_Elderly{i,1}(1:end-2,6)); 
+    Mass_kg(i,1)=Weight(i,1)/9.81;  
+end
+  
+%adding into metadata structure: weight and mass estimated from static test;
+for i=1:Dim(1,1)
+elderly_metadata(i).WEIGHT_N=Weight(i,1);
+elderly_metadata(i).MASS_measured_kg=Mass_kg(i,1);
+end
+
+%% Get stance EVENTS for each foot.
+% Get were in time (which row of the matrix) each stance phase
+% starts and ends (events_foot) and also the number of steps (n_steps_foot):
+%foot = R: right or L: left.
+isnan_R={[]}; events_R={[]}; n_steps_R={[]}; %right
+isnan_L={[]}; events_L={[]}; n_steps_L={[]}; %left
+
+for i=1:Dim(1,1)
+    [isnan_R{i,1}, events_R{i,1}, events_R{i,2}, n_steps_R{i,1}] = get_Events(Data_GRF_Elderly{i,2}(:,3));
+    [isnan_L{i,1}, events_L{i,1}, events_L{i,2}, n_steps_L{i,1}] = get_Events(Data_GRF_Elderly{i,2}(:,6));
+end
+
+
+%% try using functions to plot
+plot_trials(Dim,3,3,'b',Data_GRF_Elderly,'GRF Vertical ','Time samples (ms)','GRF_V (N)',' - Trials: ',' - Right foot');
+plot_trials(Dim,6,3,'r',Data_GRF_Elderly,'GRF Vertical ','Time samples (ms)','GRF_V (N)',' - Trials: ',' - Left foot');
+
+%% Segment: using stance events:
+%[(events_foot{i_1} = start) and (events_foot{i_2} = end)] 
+%and the number of steps[n_steps_foot];
+elderly_grf_R = Segment(Data_GRF_Elderly,n_steps_R,events_R,2,3,4);
+elderly_grf_L = Segment(Data_GRF_Elderly,n_steps_L,events_L,5,6,7);
+
+%% Prepare data: divide by bodyweight, delete (too short curves), downsample, filter and interpolate;
+Fc=20; %define cut frequency: learn how; or just cite the dissertation using 20Hz as proposed by: 
+
+%right
+prepared_curves_R=prepare_curves(Dim(1,1),n_steps_R,elderly_grf_R,Weight,Fs,Fc);
+%left
+prepared_curves_L=prepare_curves(Dim(1,1),n_steps_L,elderly_grf_L,Weight,Fs,Fc);
+
+%% assigning data for correlation calculations
+%cell of cells, with i rows (participants) with l from 1 to 3 columns for each grf component (x,y,z)
+
+
+grf_R_w={[]}; %right
+grf_L_w={[]}; %left
+for i=1:Dim(1,1)
+    
+    grf_R_w{i,2}=length(prepared_curves_R{i,1});
+    grf_L_w{i,2}=length(prepared_curves_L{i,1});
+    k_r=grf_R_w{i,2};
+    k_l=grf_L_w{i,2};
+    
+    for l=1:3
+        for j=1:k_r %right
+            grf_R_w{i,1}{1,l}(j,:)= horzcat(transp(prepared_curves_R{i,l}{j,1}(:,1)));
+        end
+        for j=1:k_l %left
+            grf_L_w{i,1}{1,l}(j,:)= horzcat(transp(prepared_curves_L{i,l}{j,1}(:,1)));
+        end
+    end
+end
+
+%% plot before correlation calculations:
+plot_stance(Dim,2,'b',grf_R_w,"Stance Phase (%)","$\bf\frac{GRF(N)}{Weight(N)}$"," - Nº Curves: "," Right Foot", " - Before CorrFilter");
+plot_stance(Dim,2,'r',grf_L_w,"Stance Phase (%)","$\bf\frac{GRF(N)}{Weight(N)}$"," - Nº Curves: "," Left Foot", " - Before CorrFilter");
+
+%% correlation Filter
+[output_subj_R,rep_n_R] = repeat_corrFilter(Dim(1,1),grf_R_w,0.97);
+[output_subj_L,rep_n_L] = repeat_corrFilter(Dim(1,1),grf_L_w,0.97);
+plot_stance(Dim,3,'b',output_subj_R,"Stance Phase (%)","$\bf\frac{GRF(N)}{Weight(N)}$"," - Nº Curves: "," Right Foot"," - After CorrFilter");
+plot_stance(Dim,3,'r',output_subj_L,"Stance Phase (%)","$\bf\frac{GRF(N)}{Weight(N)}$"," - Nº Curves: "," Left Foot", " - After CorrFilter");

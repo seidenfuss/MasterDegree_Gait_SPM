@@ -1,5 +1,5 @@
 
-function [data_m, Fs] = import_subfolder_files(main_pathway)
+function [data_m, Fs] = importSubfolderFiles(main_pathway)
 %% open a main_folder with multiple sub_folders and import all input_files within each sub_folder in an output_file;
 
 % main_pathway="./your_folder_name"; % it is the format of the pathway of your
@@ -53,7 +53,7 @@ data_n=cell(dim(1,1),dim(1,2)-1);
 for k=1:dim(1,1)
     for j=2:dim(1,2)
         if cellfun('isempty',name_files(k,j)) == 0
-           data_n{k,j-1}=importfile(strcat(name_files(k,1),"\",name_files(k,j)));
+           data_n{k,j-1}=importFile(strcat(name_files(k,1),"\",name_files(k,j)));
         end
     end
 end
@@ -66,7 +66,8 @@ for l=1:dim_d(1,1)
 data_m{l,1}=data_n{l,1};
     for m=1:dim_d(1,2)
         if cellfun('isempty',data_n(l,m)) == 0
-        data_m{l,2}=vertcat(data_n{l,2:m});
+        data_m{l,2}=vertcat(data_n{l,2:m});%concatenate trials (m-1)
+        data_m{l,3}=m-1; %get number of trials concatenated
         end
     end
 % calculate the sample frequency as the inverse of the minimal time

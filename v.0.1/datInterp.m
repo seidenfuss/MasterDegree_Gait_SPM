@@ -5,7 +5,7 @@
 % e v5cubic).
 % Caso não informado utiliza como padrão a spline.
 
-function [yi] = dat_interp(dat,points,method)
+function [yi] = datInterp(dat,points,method)
 if nargin == 2; method = 'spline'; end
 [nl,nc] = size(dat);
 x = [1:nl];

@@ -1,4 +1,4 @@
-function [ data_filtered ] = filter_data( data,Fc,Fs )
+function [ data_filtered ] = filterData( data,Fc,Fs )
 %Para filtrar os dados com filtro Butterworth zero-lag
 %   data= dados; Fc=frequência de corte; Fs=frequência de amostragem
 ordem = 4;       % passagem do filtro de quarta ordem

@@ -1,4 +1,4 @@
-function [segmented_data] = Segment(data,n_steps,b_R,x,y,z)
+function [segmented_data] = segmentCurves(data,n_steps,b_R,x,y,z)
 
 %%   Detailed explanation goes here
 %SEGMENT: It creates i sub-groups containing k (N_steps) for each

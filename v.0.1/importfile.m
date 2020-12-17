@@ -1,4 +1,4 @@
-function data = importfile(filename, dataLines)
+function data = importFile(filename, dataLines)
 %IMPORTFILE Import data from a text file
 %  DATA = IMPORTFILE(FILENAME) reads data from text file
 %  FILENAME for the default selection.  Returns the numeric data.

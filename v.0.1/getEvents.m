@@ -1,4 +1,4 @@
-function [a, b, c, n_steps] = get_Events(data)%data is the cell you will be evaluating
+function [a, b, c, n_steps] = getEvents(data)%data is the cell you will be evaluating
 
 a=isnan(data);
 n_steps=0;
