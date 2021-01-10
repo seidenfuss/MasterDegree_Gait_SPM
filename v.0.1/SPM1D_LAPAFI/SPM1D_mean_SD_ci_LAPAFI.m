@@ -1,0 +1,1 @@
+%% mean and SD LAPAFI curves
