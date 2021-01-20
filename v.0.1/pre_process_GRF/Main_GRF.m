@@ -61,7 +61,7 @@ plotStance(Dim,2,'r',grf_L_w,"Stance Phase (%)","$\bf\frac{GRF(N)}{Weight(N)}$",
 %% corr_limiar on corrFilter: 
 %testing different correlation coeficients as the limiar for corrFilter function;
 
-corr_limiar=[0.80,0.85,0.90,0.95,0.97];
+corr_limiar=[0.80,0.85,0.90,0.95];
 for rpt = 1:numel(corr_limiar)
     corr_text{rpt}=strcat('CorrFilter ',num2str(corr_limiar(rpt)*100),'%');
     [output_subj_R{rpt},rep_n{rpt}] = repeatCorrFilter(Dim(1,1),grf_R_w,corr_limiar(rpt));
@@ -99,10 +99,6 @@ plotStance(Dim,3,'r',output_subj_L{end},"Stance Phase (%)","$\bf\frac{GRF(N)}{We
  
  elderly_metadata(i).GRF_R_corrFilter95=output_subj_R{4}(i,:);
  elderly_metadata(i).GRF_L_corrFilter95=output_subj_L{4}(i,:); 
- 
- elderly_metadata(i).GRF_R_corrFilter97=output_subj_R{5}(i,:);
- elderly_metadata(i).GRF_L_corrFilter97=output_subj_L{5}(i,:);
-
  end
  
  
@@ -119,7 +115,7 @@ plotStance(Dim,3,'r',output_subj_L{end},"Stance Phase (%)","$\bf\frac{GRF(N)}{We
  end
  
  for i=1:Dim(1,1)
-     for j=1:6
+     for j=1:5
      elderly_metadata(i).n_steps_R{1,j}=curves_R{i,j};
      elderly_metadata(i).n_steps_L{1,j}=curves_L{i,j};
      end
@@ -127,33 +123,46 @@ plotStance(Dim,3,'r',output_subj_L{end},"Stance Phase (%)","$\bf\frac{GRF(N)}{We
  
  figure()
   for i = 1:Dim(1,1)
-    for j=1:6
+    for j=1:5
       subplot(5,3,i)
          bar(j,curves_R{i,j},"stacked",'b')
          hold on
          ylim([0 25])
          sgtitle('Number of curves corrFilter - Right Foot')
-         set(gca,'XTick',1:1:6)
-         set(gca,'XTickLabel',{'Origin','\rho=0.80','\rho=0.85','\rho=0.90','\rho=0.95','\rho=0.97'})
+         set(gca,'XTick',1:1:5)
+         set(gca,'XTickLabel',{'Origin','\rho=0.80','\rho=0.85','\rho=0.90','\rho=0.95'})
     end
   end
   
   figure()
   for i = 1:Dim(1,1)
-    for j=1:6
+    for j=1:5
       subplot(5,3,i)
          bar(j,curves_L{i,j},"stacked",'r')
          hold on
          ylim([0 25])
          sgtitle('Number of curves corrFilter - Left Foot')
-         set(gca,'XTick',1:1:6)
-         set(gca,'XTickLabel',{'Origin','\rho=0.80','\rho=0.85','\rho=0.90','\rho=0.95','\rho=0.97'})
+         set(gca,'XTick',1:1:5)
+         set(gca,'XTickLabel',{'Origin','\rho=0.80','\rho=0.85','\rho=0.90','\rho=0.95'})
 
     end
   end
+%save('elderly_metadata_GRF.mat','elderly_metadata');
 
+%% keep only those participants that have n_steps >= 4 curves for both feet on the last correlation filter (97%);
+aa=1;
+%outputGreater4steps={[]};
+for i =1:Dim(1,1)
+    if elderly_metadata(i).n_steps_R{1, end-1}>=4  && elderly_metadata(i).n_steps_L{1, end-1} >=4
+    kk(aa)=i;
+    aa=aa+1;
+    end
+    elderly_metadata1=elderly_metadata(kk);
+    %outputGreater4steps=
+end
+%save('doSPM_elderly.mat','outputGreater4steps');
+save('elderly_metadata_GRF.mat','elderly_metadata1');
 
-save('elderly_metadata_GRF.mat','elderly_metadata');
 
 %% Database_Nature % DOING SOMEWHERE ELSE...
 
