@@ -5,12 +5,10 @@ clc;
 %(0) Load data:
 load('meanSD_elderly_LAPAFI.mat');
 for i=1:size(meanSD_elderly_LAPAFI,2)    
-        YR(i,:,1)=-meanSD_elderly_LAPAFI(i).mean_GRF_R{1, 1}(1,:);
-        YL(i,:,1)=-meanSD_elderly_LAPAFI(i).mean_GRF_L{1, 1}(1,:);
-        YR(i,:,2)=meanSD_elderly_LAPAFI(i).mean_GRF_R{1, 2}(1,:);
-        YL(i,:,2)=meanSD_elderly_LAPAFI(i).mean_GRF_L{1, 2}(1,:);
-        YR(i,:,3)=meanSD_elderly_LAPAFI(i).mean_GRF_R{1, 3}(1,:);
-        YL(i,:,3)=-meanSD_elderly_LAPAFI(i).mean_GRF_L{1, 3}(1,:);
+    for d=1:3
+        YR(i,:,d)=meanSD_elderly_LAPAFI(i).mean_GRF_R{1, d}(1,:);
+        YL(i,:,d)=meanSD_elderly_LAPAFI(i).mean_GRF_L{1, d}(1,:);
+    end
 end
 
 %(1) Conduct SPM analysis:

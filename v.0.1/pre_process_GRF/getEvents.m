@@ -1,5 +1,5 @@
+%% descrever bem
 function [a, b, c, n_steps] = getEvents(data)%data is the cell you will be evaluating
-
 a=isnan(data);
 n_steps=0;
 b=zeros(1,n_steps);
