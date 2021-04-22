@@ -1,6 +1,19 @@
 function [output,rep_n] = repeatCorrFilter(dim,data,corr_limiar)
-%UNTITLED4 Summary of this function goes here
-%   Detailed explanation goes here
+%repeatCorrFilter receives the dimensions of data (dim), the matrix to work
+%on (data) and the limiar correlation the user wants the data to achieve.
+%It returns as output the optmized matrices for all participants (output) and the
+%total number of repetitions (rep_n) of the correlation filter to achieve the desired correlation limiar.
+
+%   This function recalls other function called corrFilter, and has the
+%   purpose of making the process recursive. So, while the repeat status
+%   returned by corrFilter returns true, the number of repetition is
+%   incremented and the repetition status is refreshed until all repeat
+%   status of all participants are false and the while loop is finished.
+%   finally, the output matrix is mounted using the resultant optimized matrix 
+%   for the lastest repetion incremented (rep_n) when the while loop was 
+%   finished for each participant.
+%   It also returns the dimensions of the resultant optimized matrices.
+
 matrix_opt={[]};
 rep_n=1;
 repeat={[]};
