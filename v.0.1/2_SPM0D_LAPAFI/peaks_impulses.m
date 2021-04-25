@@ -12,8 +12,6 @@ dim=size(meanSD_elderly_LAPAFI);
    yL{i,d} = meanSD_elderly_LAPAFI(i).mean_GRF_L{1, d}(1,:);
      end
  end
- 
- 
 %Plotar
  
 mytitle_R={[]};
@@ -85,14 +83,14 @@ end
         xlabel("Stance Phase (%)");
         ylabel("$\bf\frac{GRF(N)}{Weight(N)}$",'interpreter','latex');        
      end
-     mytitle_R{d,1}=strcat("Mean and SD (GRF Right) - after correlation filter ",my_string(1,d));
+     mytitle_R{d,1}=strcat("Mean and SD (GRF Right) - after corrFilter2 ",my_string(1,d));
      sgtitle(mytitle_R(d,1));
 end
  for d = 1:3
  figure()
      for i =1:size(matrix_opt_L1,1)
         subplot(2,6,i)
-        spm1d.plot.plot_meanSD(matrix_opt_L1{i,d}, 'color', 'b'); hold on;  plot([0 100], [0 0], 'k:');  
+        spm1d.plot.plot_meanSD(matrix_opt_L1{i,d}, 'color', 'r'); hold on;  plot([0 100], [0 0], 'k:');  
         id=matrix_opt_L1{i,4};
         if id<=9
             title(strcat("ID: 0",num2str(id)));
@@ -103,7 +101,7 @@ end
         xlabel("Stance Phase (%)");
         ylabel("$\bf\frac{GRF(N)}{Weight(N)}$",'interpreter','latex');        
      end
-     mytitle_L{d,1}=strcat("Mean and SD (GRF Left) - after correlation filter ",my_string(1,d));
+     mytitle_L{d,1}=strcat("Mean and SD (GRF Left) - after corrFilter2 ",my_string(1,d));
      sgtitle(mytitle_L(d,1));
 end
 
@@ -111,14 +109,22 @@ end
 
 %% find peaks, valleys, zeros, and its timestamps...
 
-
 GRF_R=matrix_opt_R1;
-GRF_L=matrix_opt_R1;
+GRF_L=matrix_opt_L1;
 
 
 %Anterior-Posterior
     %max,min
-
+    for i =1: size(GRF_R,1)
+        elderly(i).ID=GRF_L{i,4};
+        [elderly(i).max_AP_R,elderly(i).locmax_AP_R]=max(GRF_R{i,1});
+        [elderly(i).min_AP_R,elderly(i).locmin_AP_R]=min(GRF_R{i,1});
+    end
+    for i =1: size(GRF_L,1)
+        [elderly(i).max_AP_L,elderly(i).locmax_AP_L]=max(GRF_L{i,1});
+        [elderly(i).min_AP_L,elderly(i).locmin_AP_L]=min(GRF_L{i,1});
+    end
+    
     
     %zeros
 
