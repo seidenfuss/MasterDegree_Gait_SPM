@@ -1,3 +1,13 @@
+%% Found Anterior posterior valley and peak by using max and min functions, thats all, piece of cake.
+%% Found vertical peaks by using the function max between 1 and 50 for first peak,
+%and between 50 and 100 for second peak 
+%(summing to 50, because it gets the index of new vector of only 50 elements 
+%and we want the position from 100)
+%For valley we searched between the position of peak 1 and peak two, 
+%summing to the position of peak one to get the relative position for the 
+%100 elements vector.
+%% Medio Lateral is going to be a little tought: 
+
 close all; clear; clc;
 load('meanSD_elderly_LAPAFI.mat'); %data in here - just loading...
 dim=size(meanSD_elderly_LAPAFI);
@@ -12,8 +22,8 @@ dim=size(meanSD_elderly_LAPAFI);
    yL{i,d} = meanSD_elderly_LAPAFI(i).mean_GRF_L{1, d}(1,:);
      end
  end
-%Plotar
  
+%Plot
 mytitle_R={[]};
 mytitle_L={[]};
 my_string=["Anterior Posterior","Vertical","Medio Lateral"];
@@ -117,21 +127,30 @@ GRF_L=matrix_opt_L1;
     %max,min
     for i =1: size(GRF_R,1)
         elderly(i).ID=GRF_L{i,4};
-        [elderly(i).max_AP_R,elderly(i).locmax_AP_R]=max(GRF_R{i,1});
         [elderly(i).min_AP_R,elderly(i).locmin_AP_R]=min(GRF_R{i,1});
+        [elderly(i).max_AP_R,elderly(i).locmax_AP_R]=max(GRF_R{i,1});
     end
     for i =1: size(GRF_L,1)
-        [elderly(i).max_AP_L,elderly(i).locmax_AP_L]=max(GRF_L{i,1});
         [elderly(i).min_AP_L,elderly(i).locmin_AP_L]=min(GRF_L{i,1});
+        [elderly(i).max_AP_L,elderly(i).locmax_AP_L]=max(GRF_L{i,1});
     end
-    
-    
     %zeros
 
-%Vertical
-    %min
-    %max between begin and min
-    %max between min and end
+    
+%Vertical 
+    %peaks
+    for i =1: size(GRF_R,1)
+        [elderly(i).peak1_V_R,elderly(i).locpeak1_V_R]=max(GRF_R{i,2}(1,1:50));
+        [elderly(i).peak2_V_R,elderly(i).locpeak2_V_R]=max(GRF_R{i,2}(1,50:100));
+        elderly(i).locpeak2_V_R=elderly(i).locpeak2_V_R+50;
+    end
+    
+    %valley (mid stance)
+     for i =1: size(GRF_R,1)
+        [elderly(i).valley_V_R,elderly(i).locvalley_V_R]=min(GRF_R{i,2}(1,elderly(i).locpeak1_V_R:elderly(i).locpeak2_V_R));
+        elderly(i).locvalley_V_R=elderly(i).locvalley_V_R+elderly(i).locpeak1_V_R;
+    end
+    
     %zeros
 
 %Medio Lateral
