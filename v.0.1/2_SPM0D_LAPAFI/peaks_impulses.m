@@ -118,10 +118,8 @@ end
 %Following Vaverka's study 2015
 
 %% find peaks, valleys, zeros, and its timestamps...
-
 GRF_R=matrix_opt_R1;
 GRF_L=matrix_opt_L1;
-
 
 %Anterior-Posterior
     %max,min
@@ -138,25 +136,44 @@ GRF_L=matrix_opt_L1;
 
     
 %Vertical 
-    %peaks
+    %peaks and valley right
     for i =1: size(GRF_R,1)
         [elderly(i).peak1_V_R,elderly(i).locpeak1_V_R]=max(GRF_R{i,2}(1,1:50));
         [elderly(i).peak2_V_R,elderly(i).locpeak2_V_R]=max(GRF_R{i,2}(1,50:100));
-        elderly(i).locpeak2_V_R=elderly(i).locpeak2_V_R+50;
-    end
-    
-    %valley (mid stance)
-     for i =1: size(GRF_R,1)
+        elderly(i).locpeak2_V_R=elderly(i).locpeak2_V_R+50; %com dúvida nesse +50 [pq matlab começa em 1]
         [elderly(i).valley_V_R,elderly(i).locvalley_V_R]=min(GRF_R{i,2}(1,elderly(i).locpeak1_V_R:elderly(i).locpeak2_V_R));
         elderly(i).locvalley_V_R=elderly(i).locvalley_V_R+elderly(i).locpeak1_V_R;
     end
     
-    %zeros
-
+    %%peaks and valley right
+    for i =1: size(GRF_L,1)
+        [elderly(i).peak1_V_L,elderly(i).locpeak1_V_L]=max(GRF_L{i,2}(1,1:50));
+        [elderly(i).peak2_V_L,elderly(i).locpeak2_V_L]=max(GRF_L{i,2}(1,50:100));
+        elderly(i).locpeak2_V_L=elderly(i).locpeak2_V_L+50; %com dúvida nesse +50 [pq matlab começa indexação em 1]
+        [elderly(i).valley_V_L,elderly(i).locvalley_V_L]=min(GRF_L{i,2}(1,elderly(i).locpeak1_V_L:elderly(i).locpeak2_V_L));
+        elderly(i).locvalley_V_L=elderly(i).locvalley_V_L+elderly(i).locpeak1_V_L;
+    end
+   
+    
+  
 %Medio Lateral
-    %find a logic... 
-    %zeros
-    %
+    %find a logic:
+    %peak1_ML: max value between 1:50
+    %valley1_ML: min value between 1:50
+    %valley2_ML: min value between 50:100 (loc +50)  é 50?
+    
+    for i =1: size(GRF_R,1)
+        [elderly(i).peak1_ML_R,elderly(i).locpeak1_ML_R]=max(GRF_R{i,3}(1,1:50));
+        [elderly(i).valley1_ML_R,elderly(i).locvalley2_ML_R]=min(GRF_R{i,3}(1,1:50));
+        [elderly(i).valley2_ML_R,elderly(i).locvalley2_ML_R]=min(GRF_R{i,3}(1,50:100));
+        elderly(i).locvalley2_ML_R=elderly(i).locvalley2_ML_R+50;
+    end
+    for i =1: size(GRF_L,1)
+        [elderly(i).peak1_ML_L,elderly(i).locpeak1_ML_L]=max(GRF_L{i,3}(1,1:50));
+        [elderly(i).valley1_ML_L,elderly(i).locvalley2_ML_L]=min(GRF_L{i,3}(1,1:50));
+        [elderly(i).valley2_ML_L,elderly(i).locvalley2_ML_L]=min(GRF_L{i,3}(1,50:100));
+        elderly(i).locvalley_ML_L=elderly(i).locvalley2_ML_L+50;
+    end
 
 %% impulses
 
