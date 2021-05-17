@@ -50,10 +50,12 @@ plotTrials(Dim,6,3,'r',Data_GRF_Elderly,'GRF Vertical ','Time samples (ms)','GRF
 elderly_grf_R = segmentCurves(Data_GRF_Elderly,n_steps_R,events_R,2,3,4);
 elderly_grf_L = segmentCurves(Data_GRF_Elderly,n_steps_L,events_L,5,6,7);
 
+
 %% Prepare data: divide by bodyweight, delete (too short curves), downsample, filter and interpolate;
 Fc=24;
-[prepared_curves_R,downsampled_R]=prepDataCurves(Dim(1,1),n_steps_R,elderly_grf_R,Weight,Fs,Fc);
-[prepared_curves_L,downsampled_L]=prepDataCurves(Dim(1,1),n_steps_L,elderly_grf_L,Weight,Fs,Fc);
+[prepared_curves_R,downsampled_R,filtered_R]=prepDataCurves(Dim(1,1),n_steps_R,elderly_grf_R,Weight,Fs,Fc);
+[prepared_curves_L,downsampled_L,filtered_L]=prepDataCurves(Dim(1,1),n_steps_L,elderly_grf_L,Weight,Fs,Fc);
+
 
 %% assigning data for correlation calculations
 [grf_R_w,grf_L_w]=prepDataCorr(Dim,prepared_curves_R,prepared_curves_L);
@@ -70,7 +72,7 @@ for rpt = 1:numel(corr_limiar)
     [output_subj_R{rpt},rep_n{rpt}] = repeatCorrFilter(Dim(1,1),grf_R_w,corr_limiar(rpt));
     [output_subj_L{rpt},rep_n{rpt}] = repeatCorrFilter(Dim(1,1),grf_L_w,corr_limiar(rpt));
 end
-
+% plot after correlation filter
 plotStance(Dim,3,'b',output_subj_R{end},"Stance Phase (%)","$\bf\frac{GRF(N)}{Weight(N)}$"," - Nº Curves: "," Right Foot ",corr_text(end));
 plotStance(Dim,3,'r',output_subj_L{end},"Stance Phase (%)","$\bf\frac{GRF(N)}{Weight(N)}$"," - Nº Curves: "," Left Foot ",corr_text(end));
 
@@ -85,7 +87,11 @@ plotStance(Dim,3,'r',output_subj_L{end},"Stance Phase (%)","$\bf\frac{GRF(N)}{We
     %Downsampled and interpolated to 100 points %101? (nature has 101)
     elderly_metadata(i).GRF_R_segmented=grf_R_w{i,1};
     elderly_metadata(i).GRF_L_segmented=grf_L_w{i,1};
-
+    
+    %sampled GRF (filtered before downsample and interpolation)
+    elderly_metadata(i).GRF_R_filtered=filtered_R(i,:);
+    elderly_metadata(i).GRF_L_filtered=filtered_L(i,:);
+    
     % GRF_3D_corrFilter(0.85, 0.90, 0.95); 
     elderly_metadata(i).GRF_R_corrFilter85=output_subj_R{1}(i,:);
     elderly_metadata(i).GRF_L_corrFilter85=output_subj_L{1}(i,:);
@@ -97,7 +103,6 @@ plotStance(Dim,3,'r',output_subj_L{end},"Stance Phase (%)","$\bf\frac{GRF(N)}{We
  
  
 %% number of curves vs limiar_corr
-
 [n_steps_R]=plotCurveNcorrCoef(grf_R_w,corr_limiar,output_subj_R,Dim,'Right','b');
 [n_steps_L]=plotCurveNcorrCoef(grf_L_w,corr_limiar,output_subj_L,Dim,'Left','r');
 
@@ -108,7 +113,7 @@ for i =1:Dim(1,1)
         keeper(count)=i;
         count=count+1;
     end
-    elderly_data_proc=elderly_metadata(keeper);
+    elderly_GRF_proc=elderly_metadata(keeper);
 end
-save('elderly_GRF_proc.mat','elderly_data_proc');
+save('elderly_GRF_proc.mat','elderly_GRF_proc');
 disp('GRF processing: finished.')
