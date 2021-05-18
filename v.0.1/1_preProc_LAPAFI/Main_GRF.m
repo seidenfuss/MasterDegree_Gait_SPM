@@ -19,6 +19,7 @@ Dim=size(Data_GRF_Elderly);
 %weight and mass
 Weight = zeros(Dim(1,1),1);
 Mass_kg = zeros(Dim(1,1),1);
+
 %getEvents
 isnan_R={[]}; events_R={[]}; n_steps_R={[]}; %right
 isnan_L={[]}; events_L={[]}; n_steps_L={[]}; %left
@@ -42,6 +43,7 @@ for i=1:Dim(1,1)
     [isnan_R{i,1}, events_R{i,1}, events_R{i,2}, n_steps_R{i,1}] = getEvents(Data_GRF_Elderly{i,2}(:,3));
     [isnan_L{i,1}, events_L{i,1}, events_L{i,2}, n_steps_L{i,1}] = getEvents(Data_GRF_Elderly{i,2}(:,6));
 end
+
 plotTrials(Dim,3,3,'b',Data_GRF_Elderly,'GRF Vertical ','Time samples (ms)','GRF_V (N)',' - Trials: ',' - Right foot');
 plotTrials(Dim,6,3,'r',Data_GRF_Elderly,'GRF Vertical ','Time samples (ms)','GRF_V (N)',' - Trials: ',' - Left foot');
 
@@ -65,18 +67,21 @@ plotStance(Dim,2,'b',grf_R_w,"Stance Phase (%)","$\bf\frac{GRF(N)}{Weight(N)}$",
 plotStance(Dim,2,'r',grf_L_w,"Stance Phase (%)","$\bf\frac{GRF(N)}{Weight(N)}$"," - Nº Curves: "," Left Foot ", " - Before CorrFilter");
 
 %% corr_limiar on corrFilter: testing different correlation coeficients as the limiar for corrFilter function:
-corr_limiar=[0.85,0.90,0.95];
 
+corr_limiar=[0.85,0.90,0.95];
 for rpt = 1:numel(corr_limiar)
     corr_text{rpt}=strcat('CorrFilter ',num2str(corr_limiar(rpt)*100),'%');
     [output_subj_R{rpt},rep_n{rpt}] = repeatCorrFilter(Dim(1,1),grf_R_w,corr_limiar(rpt));
     [output_subj_L{rpt},rep_n{rpt}] = repeatCorrFilter(Dim(1,1),grf_L_w,corr_limiar(rpt));
 end
+
 % plot after correlation filter
 plotStance(Dim,3,'b',output_subj_R{end},"Stance Phase (%)","$\bf\frac{GRF(N)}{Weight(N)}$"," - Nº Curves: "," Right Foot ",corr_text(end));
 plotStance(Dim,3,'r',output_subj_L{end},"Stance Phase (%)","$\bf\frac{GRF(N)}{Weight(N)}$"," - Nº Curves: "," Left Foot ",corr_text(end));
 
-%% Export Data for SPM
+
+%% Export Data
+
  for i=1:Dim(1,1)
     % GRF_3D_concatenated;
     elderly_metadata(i).GRF_R_concat=Data_GRF_Elderly{i,2}(:,2:4);% Right
@@ -115,5 +120,6 @@ for i =1:Dim(1,1)
     end
     elderly_GRF_proc=elderly_metadata(keeper);
 end
+
 save('elderly_GRF_proc.mat','elderly_GRF_proc');
 disp('GRF processing: finished.')
