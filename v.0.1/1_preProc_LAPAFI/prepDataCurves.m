@@ -1,4 +1,4 @@
-function [prep_data1,prep_data2,prep_data3] = prepDataCurves(dim_subj,n_steps,data,W,Fs,Fc)
+function [prep_data1,prep_data2] = prepDataCurves(dim_subj,n_steps,data,W,Fs,Fc)
 %%
 %
 
@@ -24,15 +24,14 @@ for i=1:dim_subj %i varies from 1 to the total number of participants
             
             %interpolate data that have lenght different from 0;
             if ~isempty(downsampled{i,j,l})
-                interpolated{i,j,l}=datInterp(downsampled{i,j,l},100,'pchip');                
+                interpolated{i,j,l}=datInterp(downsampled{i,j,l},101,'pchip');                
             end
         end
         if   ~isempty(downsampled{i,j,1})
             p=p+1;
             for l=1:3
                 prep_data1{i,l}(p,1)=vertcat(interpolated(i,j,l));
-                prep_data2{i,l}(p,1)=vertcat(downsampled(i,j,l));
-                prep_data3{i,l}(p,1)=vertcat(filtered(i,j,l));
+                prep_data2{i,l}(p,1)=vertcat(filtered(i,j,l));
             end
         end
     end
