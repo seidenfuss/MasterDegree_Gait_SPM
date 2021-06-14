@@ -1,3 +1,5 @@
+
+function [yi] = datInterp(dat,points,method)
 % DATINTERP
 % datinterp(dat,points,method)
 % Onde dat é matriz de dados; points é número de pontos interpolados em dat;
@@ -5,7 +7,6 @@
 % e v5cubic).
 % Caso não informado utiliza como padrão a spline.
 
-function [yi] = datInterp(dat,points,method)
 if nargin == 2; method = 'spline'; end
 [nl,nc] = size(dat);
 x = [1:nl];
@@ -15,3 +16,4 @@ for i = 1:nc;
 end
 
 yi = yinterp;
+end

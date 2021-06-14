@@ -1,10 +1,10 @@
 function [ data_filtered ] = filterData( data,Fc,Fs )
-%Para filtrar os dados com filtro Butterworth zero-lag
-%Fc=frequência de corte; 
-%Fs=frequência de amostragem
+%To filter data with low-pass butterworth filter with zero-lag
+%Fc=cut-off frequency; 
+%Fs=sampling frequency
 
-ordem = 4;       % passagem do filtro de quarta ordem
-Wn = Fc/(Fs/2);  % frequência de corte normalizada pela metade da freq. de amostragem
-[d,c] = butter(ordem,Wn,'low'); % definido o filtro (butterworth)
-data_filtered=filtfilt(d,c,data) ;
+ordem = 2;       % second order filter
+Wn = Fc/(Fs/2);  % normalize cut-off frequency (Fc) by half of sampling frequency (Fs)
+[d,c] = butter(ordem,Wn,'low'); % filter type: low-pass butterworth
+data_filtered=filtfilt(d,c,data) ; % filter become 4th order because it is passed twice
 end

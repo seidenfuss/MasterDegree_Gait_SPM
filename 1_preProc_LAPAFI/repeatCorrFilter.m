@@ -19,11 +19,11 @@ rep_n=1;
 repeat={[]};
 output={[]};
 for i=1:dim
-    [matrix_opt{i,rep_n},repeat{i,rep_n}] = corrFilter(data{i,1}, corr_limiar);
+    [matrix_opt{i,rep_n},repeat{i,rep_n}] = corrFilterIntra(data{i,1}, corr_limiar);
     r=repeat{i,rep_n};
     while r == true
         rep_n= rep_n + 1;
-        [matrix_opt{i,rep_n},repeat{i,rep_n}]=corrFilter(matrix_opt{i,rep_n-1},corr_limiar);
+        [matrix_opt{i,rep_n},repeat{i,rep_n}]=corrFilterIntra(matrix_opt{i,rep_n-1},corr_limiar);
         r=repeat{i,rep_n};
     end
     output{i,1}=matrix_opt{i,rep_n}(~isempty(matrix_opt{i,rep_n}),:);

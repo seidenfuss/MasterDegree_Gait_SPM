@@ -38,7 +38,7 @@ spmi.plot_threshold_label();
 spmi.plot_p_values();
 title('Hotelling T2')
 xlabel("Stance Phase (%)");
-sgtitle('Elderly Women - GRF Walking - 12 participants')
+sgtitle('LAPAFI - GRF Walking - Older adults')
 
 %% Sidak correction ----- t-test paired 
 alpha=0.05;

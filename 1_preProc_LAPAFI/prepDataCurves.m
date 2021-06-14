@@ -1,4 +1,4 @@
-function [prep_data1,prep_data2] = prepDataCurves(n_steps,data,Weight,Fs,Fc)
+function [prep_data1] = prepDataCurves(data,n_steps,Weight,Fs,Fc)
 %%PREPDATACURVES
 %
 dim=size(data,1);
@@ -14,7 +14,7 @@ for i=1:dim %i varies from 1 to the total number of participants
             %remove data that are too short = Fs/5)
             len{i,j,d} = length(weightnorm{i,j,d});
             if len{i,j,d}>=(Fs{d,1}/5)
-                filtered{i,j,d}=filterData(weightnorm{i,j,d},Fc,Fs{d,1}/(Fs{d,1}/100));
+                filtered{i,j,d}=filterData(weightnorm{i,j,d},Fc,Fs{d,1});
                 downsampled{i,j,d}=downsample(filtered{i,j,d},(Fs{d,1}/100));
             else
                 %remove series that are too short
@@ -30,7 +30,6 @@ for i=1:dim %i varies from 1 to the total number of participants
             p=p+1;
             for d=1:3
                 prep_data1{i,d}(p,1)=vertcat(interpolated(i,j,d));
-                prep_data2{i,d}(p,1)=vertcat(filtered(i,j,d));
             end
         end
     end
