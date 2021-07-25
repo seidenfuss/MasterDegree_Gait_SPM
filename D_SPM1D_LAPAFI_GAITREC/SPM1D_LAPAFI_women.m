@@ -38,7 +38,7 @@ spmi.plot_threshold_label();
 spmi.plot_p_values();
 title('Hotelling T2')
 xlabel("Stance Phase (%)");
-sgtitle('LAPAFI - GRF Walking - Older adults')
+sgtitle('LAPAFI (older adults) - GRF Walking: self-selected speed')
 
 %% Sidak correction ----- t-test paired
 alpha=0.05;
@@ -62,7 +62,7 @@ for d=1:3
     Y_L{1,d}=vertcat(YY_L{:,d});
     
     spm_sidak{1,d}       = spm1d.stats.ttest_paired(Y_R{1,d},Y_L{1,d});
-    spmi_sidak{1,d}      = spm_sidak{1,d}.inference(p_value, 'interp',true);
+    spmi_sidak{1,d}      = spm_sidak{1,d}.inference(alpha, 'interp',true);
     disp(spmi_sidak{1,d})
     
     %(2) Plot:
@@ -84,6 +84,6 @@ for d=1:3
     title(strcat('Paired t-test:' ,my_string(d)));
     xlabel("Stance Phase (%)");
     
-    sgtitle('Post-hoc - Šidák p-value: 0.0170')
+    sgtitle('LAPAFI: post-hoc t-test (Šidák p-value: 0.0170)')
 end
 %% THE END

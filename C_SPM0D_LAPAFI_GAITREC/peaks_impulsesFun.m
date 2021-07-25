@@ -139,7 +139,7 @@ limite=[0.3,1.5,0.3];
 for d = 1:3
     figure()
     for i =1:dim(1,2)
-        subplot(2,6,i)
+        subplot(3,4,i)
         plot(data(i).mean_GRF_RL{1, d}  , 'color', 'k'); hold on;  plot([0 101], [0 0], 'k:');
         if d==1
             hold on
@@ -172,11 +172,12 @@ for d = 1:3
         else
             title(strcat("ID: ",num2str(id)));
         end
+        xlim([0 101])
         ylim([-0.3 limite(d)])
         xlabel("Stance Phase (%)");
         ylabel("$\bf\frac{GRF(N)}{Weight(N)}$",'interpreter','latex');
     end
-    mytitle{d,1}=strcat("Mean and SD (GRF Right and Left) - ",string1,my_string(1,d));
+    mytitle{d,1}=strcat("GRF peaks (mean GRF Right and Left) - ",string1,my_string(1,d));
     sgtitle(mytitle(d,1));
 end
 end

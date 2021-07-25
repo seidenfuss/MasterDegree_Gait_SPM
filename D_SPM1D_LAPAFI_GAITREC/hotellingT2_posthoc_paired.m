@@ -39,7 +39,7 @@ spmi.plot_threshold_label();
 spmi.plot_p_values();
 title('Hotelling T2 Paired')
 xlabel("Stance Phase (%)");
-sgtitle(strcat(label_part, '- GRF Walking - GAITREC Database'))
+sgtitle(strcat('GAITREC ',label_part, ' GRF Walking: self-selected speed'))
 
 spm_sidak={[]};
 spmi_sidak={[]};
@@ -67,7 +67,7 @@ if spmi.h0reject == 1
         Y_L{1,d}=vertcat(YY_L{:,d});
         
         spm_sidak{1,d}       = spm1d.stats.ttest_paired(Y_R{1,d},Y_L{1,d});
-        spmi_sidak{1,d}      = spm_sidak{1,d}.inference(p_value, 'two_tailed', true, 'interp',true);
+        spmi_sidak{1,d}      = spm_sidak{1,d}.inference(alpha, 'two_tailed', true, 'interp',true);
         disp(spmi_sidak{1,d})
         
         %(2) Plot:
@@ -89,7 +89,7 @@ if spmi.h0reject == 1
         title(strcat('Paired t-test:' ,my_string(d)));
         xlabel("Stance Phase (%)");
         
-        sgtitle(strcat(label_part,'- GAITREC Database: Post-hoc - Šidák p-value: 0.0170'))
+        sgtitle(strcat('GAITREC: ',label_part,' Post-hoc t-test (Šidák p-value: 0.0170)'))
         
     end
 end

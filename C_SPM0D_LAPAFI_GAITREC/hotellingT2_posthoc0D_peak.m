@@ -29,8 +29,9 @@ disp(spmi)
 if spmi.h0reject==1
     for d = 1:3
         spm_sidak(1,d)  = spm1d.stats.ttest2(yA(:,d), yB(:,d));
-        p_sidak=0.0170;
-        spmi_sidak(1,d) =spm_sidak(1,d).inference(p_sidak, 'two_tailed', true);
+        %p_sidak=0.0170;
+        alpha=0.05;
+        spmi_sidak(1,d) =spm_sidak(1,d).inference(alpha, 'two_tailed', true);
         
         disp(spmi_sidak(1,d))
     end

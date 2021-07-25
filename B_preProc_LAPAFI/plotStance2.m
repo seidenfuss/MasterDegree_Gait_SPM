@@ -18,6 +18,7 @@ for d = 1:3
         else
             title(strcat("ID: ",num2str(data(i).ID)));
         end
+        xlim([0 101])
         ylim([-0.3 limite(d)])
         xlabel("Stance Phase (%)");
         ylabel("$\bf\frac{GRF(N)}{Weight(N)}$",'interpreter','latex');
@@ -37,6 +38,7 @@ for d = 1:3
         else
             title(strcat("ID: ",num2str(data(i).ID)));
         end
+        xlim([0 101])
         ylim([-0.3 limite(d)])
         xlabel("Stance Phase (%)");
         ylabel("$\bf\frac{GRF(N)}{Weight(N)}$",'interpreter','latex');

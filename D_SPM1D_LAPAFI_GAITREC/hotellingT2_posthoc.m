@@ -41,7 +41,7 @@ spmi.plot_p_values();
 
 title('Hotelling T2')
 xlabel("Stance Phase (%)");
-sgtitle(strcat(label_part, ' - GRF Walking'))
+sgtitle(strcat(label_part, ' - GRF Walking: self-selected speed'))
 
 spm_sidak={[]};
 spmi_sidak={[]};
@@ -69,7 +69,7 @@ if spmi.h0reject == 1
         
         
         spm_sidak{1,d}       = spm1d.stats.ttest2(Y_A{1,d},Y_B{1,d});
-        spmi_sidak{1,d}      = spm_sidak{1,d}.inference(p_value, 'two_tailed', true, 'interp',true);
+        spmi_sidak{1,d}      = spm_sidak{1,d}.inference(alpha, 'two_tailed', true, 'interp',true);
         disp(spmi_sidak{1,d})
         
         %(2) Plot:

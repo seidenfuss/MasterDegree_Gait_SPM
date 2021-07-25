@@ -10,6 +10,7 @@ for d=1:3
         else
             title_sub=strcat('ID: ', num2str(i),curve_counting, num2str(data{i,C}));
         end
+        xlim([0 101])
         title(title_sub);
         xlabel(x_label);
         ylabel(y_label,'interpreter','latex');
