@@ -37,8 +37,8 @@ end
 
 %% Segment: using stance events;
 
-preProc.seg_grf_R = segmentCurves(Data_GRF,preProc.n_steps_R,preProc.events_R,2,3,4);
-preProc.seg_grf_L = segmentCurves(Data_GRF,preProc.n_steps_L,preProc.events_L,5,6,7);
+preProc.seg_grf_R = delimitateCurves(Data_GRF,preProc.n_steps_R,preProc.events_R,2,3,4);
+preProc.seg_grf_L = delimitateCurves(Data_GRF,preProc.n_steps_L,preProc.events_L,5,6,7);
 
 
 %% Prepare data: divide by bodyweight, delete (too short curves), downsample, filter and interpolate;
