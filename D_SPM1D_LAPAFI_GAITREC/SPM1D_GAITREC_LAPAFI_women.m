@@ -6,14 +6,9 @@ clc;
 load('GAITREC_women12.mat')
 load('elderly_subj_final.mat')
 
-%% Hotellings T2 Paired and posthoc t-test paired with sidak correction for p-value
-%GAITREC (Right vs Left)
-
-[results.GAITREC.spm.young,results.GAITREC.spmi.young,results.GAITREC.spm_sidak.young,results.GAITREC.spmi_sidak.young] = hotellingT2_posthoc_paired(GAITREC_women12.young,' Young Women (Right vs Left)','Right','SD Right','Left','SD Left');
-[results.GAITREC.spm.adult,results.GAITREC.spmi.adult,results.GAITREC.spm_sidak.adult,results.GAITREC.spmi_sidak.adult] = hotellingT2_posthoc_paired(GAITREC_women12.adult,' Adult Women (Right vs Left)','Right','SD Right','Left','SD Left');
-[results.GAITREC.spm.olderAdult,results.GAITREC.spmi.olderAdult,results.GAITREC.spm_sidak.olderAdult,results.GAITREC.spmi_sidak.olderAdult] = hotellingT2_posthoc_paired(GAITREC_women12.olderAdult,' Older Adult Women (Right vs Left)','Right','SD Right','Left','SD Left');
 
 %% Hotellings T2 and posthoc t-test2 with sidak correction for p-value
+
 %GAITREC vs GAITREC (groups)
 
 [results.GAITREC.spm.young_adult,results.GAITREC.spmi.young_adult,results.GAITREC.spm_sidak.young_adult,results.GAITREC.spmi_sidak.young_adult] = hotellingT2_posthoc(GAITREC_women12.young,GAITREC_women12.adult,'GAITREC: Young vs Adult Women ','young','SD young','adult','SD adult');
